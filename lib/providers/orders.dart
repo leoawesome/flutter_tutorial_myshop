@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import './cart.dart';
+import '../models/http_exception.dart';
 
 class OrderItem {
   final String id;
@@ -84,5 +85,19 @@ class Orders with ChangeNotifier {
       ),
     );
     notifyListeners();
+  }
+
+  Future<void> resetOrders() async {
+    final url = 'https://flutter-tutorial-2.firebaseio.com/orders.json';
+    var existingOrder = _orders;
+    _orders = [];
+    notifyListeners();
+    final response = await http.delete(url);
+    if (response.statusCode >= 400) {
+      _orders = existingOrder;
+      notifyListeners();
+      throw HttpException('Could not reset orders.');
+    }
+    existingOrder = null;
   }
 }
