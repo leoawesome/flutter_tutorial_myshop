@@ -34,21 +34,23 @@ class Orders with ChangeNotifier {
       return;
     }
     extractedData.forEach((orderId, orderData) {
-      loadedOrders.add(OrderItem(
-        id: orderId,
-        amount: orderData['amount'],
-        dateTime: DateTime.parse(orderData['dateTime']),
-        products: (orderData['products'] as List<dynamic>)
-            .map(
-              (item) => CartItem(
-                id: item['id'],
-                price: item['price'],
-                quantity: item['quantity'],
-                title: item['title'],
-              ),
-            )
-            .toList(),
-      ));
+      loadedOrders.add(
+        OrderItem(
+          id: orderId,
+          amount: orderData['amount'],
+          dateTime: DateTime.parse(orderData['dateTime']),
+          products: (orderData['products'] as List<dynamic>)
+              .map(
+                (item) => CartItem(
+                      id: item['id'],
+                      price: item['price'],
+                      quantity: item['quantity'],
+                      title: item['title'],
+                    ),
+              )
+              .toList(),
+        ),
+      );
     });
     _orders = loadedOrders.reversed.toList();
     notifyListeners();
@@ -57,19 +59,21 @@ class Orders with ChangeNotifier {
   Future<void> addOrder(List<CartItem> cartProducts, double total) async {
     const url = 'https://flutter-tutorial-2.firebaseio.com/orders.json';
     final timestamp = DateTime.now();
-    final response = await http.post(url,
-        body: json.encode({
-          'amount': total,
-          'dateTime': timestamp.toIso8601String(),
-          'products': cartProducts
-              .map((cp) => {
-                    'id': cp.id,
-                    'title': cp.title,
-                    'quantity': cp.quantity,
-                    'price': cp.price,
-                  })
-              .toList(),
-        }));
+    final response = await http.post(
+      url,
+      body: json.encode({
+        'amount': total,
+        'dateTime': timestamp.toIso8601String(),
+        'products': cartProducts
+            .map((cp) => {
+                  'id': cp.id,
+                  'title': cp.title,
+                  'quantity': cp.quantity,
+                  'price': cp.price,
+                })
+            .toList(),
+      }),
+    );
     _orders.insert(
       0,
       OrderItem(

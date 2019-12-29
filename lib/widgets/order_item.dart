@@ -1,6 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'dart:math';
 
 import '../providers/orders.dart' as ord;
 
@@ -39,26 +40,30 @@ class _OrderItemState extends State<OrderItem> {
           if (_expanded)
             Container(
               padding: EdgeInsets.symmetric(horizontal: 15, vertical: 4),
-              height: min((widget.order.products.length * 20.0 + 100), 100),
+              height: min(widget.order.products.length * 20.0 + 10, 100),
               child: ListView(
                 children: widget.order.products
-                    .map((prod) => Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text(
-                              prod.title,
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              '${prod.quantity}x \$${prod.price}',
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.grey,
+                    .map(
+                      (prod) => Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text(
+                                prod.title,
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            )
-                          ],
-                        ))
+                              Text(
+                                '${prod.quantity}x \$${prod.price}',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.grey,
+                                ),
+                              )
+                            ],
+                          ),
+                    )
                     .toList(),
               ),
             )

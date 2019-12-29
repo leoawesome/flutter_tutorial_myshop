@@ -1,9 +1,10 @@
-import 'package:flutter/cupertino.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import './product.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
 import '../models/http_exception.dart';
+import './product.dart';
 
 class Products with ChangeNotifier {
   List<Product> _items = [
@@ -40,8 +41,7 @@ class Products with ChangeNotifier {
     //       'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Cast-Iron-Pan.jpg/1024px-Cast-Iron-Pan.jpg',
     // ),
   ];
-
-  var _showFavoritesOnly = false;
+  // var _showFavoritesOnly = false;
 
   List<Product> get items {
     // if (_showFavoritesOnly) {
@@ -115,6 +115,7 @@ class Products with ChangeNotifier {
         id: json.decode(response.body)['name'],
       );
       _items.add(newProduct);
+      // _items.insert(0, newProduct); // at the start of the list
       notifyListeners();
     } catch (error) {
       print(error);
@@ -122,7 +123,7 @@ class Products with ChangeNotifier {
     }
   }
 
-  void updateProduct(String id, Product newProduct) async {
+  Future<void> updateProduct(String id, Product newProduct) async {
     final prodIndex = _items.indexWhere((prod) => prod.id == id);
     if (prodIndex >= 0) {
       final url = 'https://flutter-tutorial-2.firebaseio.com/products/$id.json';
@@ -131,12 +132,13 @@ class Products with ChangeNotifier {
             'title': newProduct.title,
             'description': newProduct.description,
             'imageUrl': newProduct.imageUrl,
-            'price': newProduct.price,
-            'isFavorite': newProduct.isFavorite,
+            'price': newProduct.price
           }));
       _items[prodIndex] = newProduct;
       notifyListeners();
-    } else {}
+    } else {
+      print('...');
+    }
   }
 
   Future<void> deleteProduct(String id) async {
@@ -145,7 +147,6 @@ class Products with ChangeNotifier {
     var existingProduct = _items[existingProductIndex];
     _items.removeAt(existingProductIndex);
     notifyListeners();
-
     final response = await http.delete(url);
     if (response.statusCode >= 400) {
       _items.insert(existingProductIndex, existingProduct);

@@ -10,6 +10,7 @@ class UserProductItem extends StatelessWidget {
   final String imageUrl;
 
   UserProductItem(this.id, this.title, this.imageUrl);
+
   @override
   Widget build(BuildContext context) {
     final scaffold = Scaffold.of(context);
@@ -39,10 +40,7 @@ class UserProductItem extends StatelessWidget {
                 } catch (error) {
                   scaffold.showSnackBar(
                     SnackBar(
-                      content: Text(
-                        'Deleting failed',
-                        textAlign: TextAlign.center,
-                      ),
+                      content: Text('Deleting failed!', textAlign: TextAlign.center,),
                     ),
                   );
                 }
