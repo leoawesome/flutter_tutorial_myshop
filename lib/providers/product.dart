@@ -1,6 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class Product with ChangeNotifier {
   final String id;
@@ -24,18 +25,18 @@ class Product with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> toggleFavoriteStatus() async {
+  Future<void> toggleFavoriteStatus(String authToken, String userId) async {
     final oldStatus = isFavorite;
     isFavorite = !isFavorite;
     notifyListeners();
-
-    final url = 'https://flutter-tutorial-2.firebaseio.com/products/$id.json';
+    final url =
+        'https://flutter-tutorial-2.firebaseio.com/userFavorites/$userId/$id.json?auth=$authToken';
     try {
-      final response = await http.patch(
+      final response = await http.put(
         url,
-        body: json.encode({
-          'isFavorite': isFavorite,
-        }),
+        body: json.encode(
+          isFavorite,
+        ),
       );
       if (response.statusCode >= 400) {
         _setFavValue(oldStatus);

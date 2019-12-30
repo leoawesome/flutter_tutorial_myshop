@@ -1,6 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 import './cart.dart';
 import '../models/http_exception.dart';
@@ -21,13 +22,17 @@ class OrderItem {
 
 class Orders with ChangeNotifier {
   List<OrderItem> _orders = [];
+  final String authToken;
+  final String userId;
+
+  Orders(this.authToken, this.userId, this._orders);
 
   List<OrderItem> get orders {
     return [..._orders];
   }
 
   Future<void> fetchAndSetOrders() async {
-    const url = 'https://flutter-tutorial-2.firebaseio.com/orders.json';
+    final url = 'https://flutter-tutorial-2.firebaseio.com/orders/$userId.json?auth=$authToken';
     final response = await http.get(url);
     final List<OrderItem> loadedOrders = [];
     final extractedData = json.decode(response.body) as Map<String, dynamic>;
@@ -58,7 +63,7 @@ class Orders with ChangeNotifier {
   }
 
   Future<void> addOrder(List<CartItem> cartProducts, double total) async {
-    const url = 'https://flutter-tutorial-2.firebaseio.com/orders.json';
+    final url = 'https://flutter-tutorial-2.firebaseio.com/orders/$userId.json?auth=$authToken';
     final timestamp = DateTime.now();
     final response = await http.post(
       url,
@@ -88,7 +93,7 @@ class Orders with ChangeNotifier {
   }
 
   Future<void> resetOrders() async {
-    final url = 'https://flutter-tutorial-2.firebaseio.com/orders.json';
+    final url = 'https://flutter-tutorial-2.firebaseio.com/orders.json?auth=$authToken';
     var existingOrder = _orders;
     _orders = [];
     notifyListeners();
